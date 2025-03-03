@@ -11,3 +11,5 @@ Install Docker Compose
 https://docs.docker.com/get-started/08_using_compose/
 
 Copy yaml script to your system with Docker & Docker Compose Installed
+
+docker compose up -d --scale workers=<How Many workers do you want>
