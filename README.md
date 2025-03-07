@@ -12,4 +12,4 @@ https://docs.docker.com/get-started/08_using_compose/
 
 Copy yaml script to your system with Docker & Docker Compose Installed
 
-docker compose up -d --scale workers=Int of for number of workers
+CLI: docker compose up -d --scale workers=Int #for number of workers
