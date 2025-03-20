@@ -1,6 +1,20 @@
 version: '3.8'
+
+#Basic Container network creation
+networks:
+  devnet:
+    driver: bridge
+    attachable: true
+
 services:
+  
+  #Build Cribl Leader Container
+  
   master:
+    networks:
+      devnet:
+        aliases:
+          -Cribl_Leader
     #Cribl image to pull down
     image: cribl/cribl:latest
     #ENV Vars to pass on container creation
@@ -11,12 +25,19 @@ services:
       - CRIBL_VOLUME_DIR=/opt/cribl/config-volume
     ports:
     #First port is the host second is the container so adjust as needed
-      - "9000:9000"
+      - 19000:9000
     #You will want to add additional for sources and destinations they will not need to mapped to the host
     volumes:
       #Working dir on host this will keep the cluster persitent
       - "~/cribl-config:/opt/cribl/config-volume"
+  
+  #Build Cribl Worker Containers
+
   workers:
+    networks:
+      devnet:
+        aliases:
+          -Cribl_Worker
     image: cribl/cribl:latest
     #This is telling Docker to wait for the creation of the leader/master container
     depends_on:
@@ -27,3 +48,22 @@ services:
       - CRIBL_DIST_LEADER_URL=tcp://<Insert_above_token_here>@master:4200
     ports:
       - 9000
+  #Adding a Splunk All in one for a destination
+  
+  #Build Splunk Destination
+  
+  splunkAllinOne:
+    networks:
+      devnet:
+        aliases:
+          -Splunk_all_in_one
+    image: splunk/splunk:latest
+    hostname: Splunk_all_in_one
+    container_name: Splunk_all_in_one
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=<your_password_here>
+    ports:
+      - 18000:8000
+      - 9997
+      - 8088
